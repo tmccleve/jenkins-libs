@@ -9,35 +9,29 @@ def call(Map pipelineParams) {
     }
 
     pipeline {
-        stages {
-            stage('fetch artifact') {
-                steps {
-                    downloadFromArtifactory(artifactoryUrl: pipelineParams.artifactoryUrl,
-                            artifactoryCredentialsId: pipelineParams.artifactoryCredentialsId,
-                            artifactoryRepo: pipelineParams.artifactoryRepo,
-                            buildName: pipelineParams.buildName,
-                            buildNumber: pipelineParams.buildNumber
-                    )
-                }
-            }
-            stage('deploy beanstalk') {
-                steps {
-                    step([$class: 'AWSEBDeploymentBuilder',
-                            applicationName: pipelineParams.applicationName,
-                            awsRegion: pipelineParams.awsRegion,
-                            bucketName: pipelineParams.bucketName,
-                            checkHealth: true,
-                            environmentName: pipelineParams.envName,
-                            keyPrefix: pipelineParams.s3KeyPrefix,
-                            maxAttempts: 30,
-                            rootObject: pipelineParams.rootObject,
-                            sleepTime: 90,
-                            versionDescriptionFormat: pipelineParams.versionDesc,
-                            versionLabelFormat: pipelineParams.versionLabel,
-                            zeroDowntime: false
-                    ])
-                }
-            }
+        stage('fetch artifact') {
+              downloadFromArtifactory(artifactoryUrl: pipelineParams.artifactoryUrl,
+                      artifactoryCredentialsId: pipelineParams.artifactoryCredentialsId,
+                      artifactoryRepo: pipelineParams.artifactoryRepo,
+                      buildName: pipelineParams.buildName,
+                      buildNumber: pipelineParams.buildNumber
+              )
+        }
+        stage('deploy beanstalk') {
+                step([$class: 'AWSEBDeploymentBuilder',
+                        applicationName: pipelineParams.applicationName,
+                        awsRegion: pipelineParams.awsRegion,
+                        bucketName: pipelineParams.bucketName,
+                        checkHealth: true,
+                        environmentName: pipelineParams.envName,
+                        keyPrefix: pipelineParams.s3KeyPrefix,
+                        maxAttempts: 30,
+                        rootObject: pipelineParams.rootObject,
+                        sleepTime: 90,
+                        versionDescriptionFormat: pipelineParams.versionDesc,
+                        versionLabelFormat: pipelineParams.versionLabel,
+                        zeroDowntime: false
+                ])
         }
     }
 }

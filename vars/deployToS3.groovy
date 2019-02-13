@@ -7,18 +7,12 @@ def call(Map pipelineParams) {
     }
 
     pipeline {
-        stages {
-            stage('checkout git') {
-                steps {
-                    git branch: pipelineParams.branch, credentialsId: pipelineParams.gitCredentialsId, url: pipelineParams.gitUrl
-                }
-            }
+        stage('checkout git') {
+            git branch: pipelineParams.branch, credentialsId: pipelineParams.gitCredentialsId, url: pipelineParams.gitUrl
+        }
 
-            stage('deploy') {
-                steps {
-                   awsCmd(pipelineParams.awsCredentialsId, "s3 sync . s3://${pipelineParams.bucketName}/${pipelineParams.s3KeyPrefix}")
-                }
-            }
+        stage('deploy') {
+           awsCmd(pipelineParams.awsCredentialsId, "s3 sync . s3://${pipelineParams.bucketName}/${pipelineParams.s3KeyPrefix}")
         }
     }
 }
